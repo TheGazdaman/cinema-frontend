@@ -8,7 +8,7 @@ export default class Theaters extends ApiComponent {
     constructor(props) {
         super(props);
 
-        this.url = '/api/theme';
+        this.url = '/api/tableTheatre';
 
         this.container_className = 'page';
 
