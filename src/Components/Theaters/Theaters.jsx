@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import {
     BrowserRouter as Router,
     Switch,
@@ -6,26 +6,80 @@ import {
     Link
 } from "react-router-dom";
 
-export default function Theaters(props) {
-    return (
+export default class Theaters extends React.Component {
+    
+    constructor(props) {
+        super(props);
 
-        <>
-            <h1>Welcome to Daydream Cinemas</h1>
+        this.state = {
+            loading: false,
+            loaded: false,
+            data: []
+        };
 
-            <div className="calltoaction">Please select a theater near you</div>
+        this.url = "http://www.cinemalist.test:8080/api/tableTheatre";
+    }
+    componentDidMount() {
+        this.loadData();    
+    }
 
-            <ul>
-                <li>
-                    <Link to="/prague">Prague</Link>
-                </li>
-                <li>
-                    <Link to="/london">London</Link>
-                </li>
-                <li>
-                    <Link to="/brussels">Brussels</Link>
-                </li>
-            </ul>
-        </>
+    loadData() {
+        if (this.url) {
+            this.setState({ 
+                loading: true,
+                loaded: false,
+                data: []
+            })
 
-    )
+            fetch(this.url)
+                .then(response => response.json())
+                .then(data => {
+                    this.setState({ 
+                        loaded: true,
+                        data: data
+                    })
+                })
+                .finally(this.setState({
+                    loading: false
+                }));
+        }
+    }
+    
+    render() {
+        let content = (
+            <div className="theatre">
+               
+            </div>
+        )
+
+        if (!this.state.loading && this.state.loaded) {
+            content = (
+            <>
+                <h1>Welcome to Daydream Cinemas</h1>
+
+                <div className="calltoaction">Please select a theater near you</div>
+
+                <ul>
+                    {
+                        this.props.data.map((theater, i) => (
+                            <li key={ i }>
+                            <Link to={ `/${theater.slug}`}>{ theater.name }</Link>
+                        </li>
+                        ))
+                    }
+        
+                </ul>
+            </>
+            )
+        }
+
+        return (
+            <section className="theaters">
+
+            { content }
+
+            </section>
+        );
+    }
+
 }
